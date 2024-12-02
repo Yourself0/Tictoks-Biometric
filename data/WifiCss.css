@@ -1,0 +1,58 @@
+body{
+	    background: #f5f2f7;
+	   	font-family: 'Poppins', sans-serif;
+}
+
+.card{
+	box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+	padding: 10px;
+}
+.wifiCard{
+	background: #c76bff2b;
+}
+.card h3{
+	text-align: center;
+	font-weight: 700;
+}
+
+.wifiCard2{
+	margin-top: 20px;
+	padding: 20px;
+}
+
+.list-item{
+	list-style: none;
+	font-size: 25px;
+    margin: inherit;
+    padding: 10px;
+    font-weight: 600;
+}
+.wifiReset{
+	width: 30px;
+	height: 30px;
+}
+.list-item:hover{
+	background: #eedbf8;
+}
+
+.list-item:focus{
+	background: #C76BFF;
+}
+
+.header_wifi{
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.password-container{
+	display: flex;
+/* background: white; */
+/* border: black; */
+
+}
+
+button.toggle-password{
+	background: white;
+	border: #f5f2f7;	
+}

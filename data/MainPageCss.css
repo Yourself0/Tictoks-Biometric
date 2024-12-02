@@ -1,0 +1,292 @@
+body {
+	background: #f5f2f7;
+	font-family: 'Poppins', sans-serif;
+	margin: 0;
+}
+
+.toolBar-main {
+	background: #C76BFF;
+	width: 100%;
+}
+
+.toolBar-header-main {
+	color: #fff;
+	text-align: center;
+	font-weight: 700;
+	cursor: pointer;
+	padding: 2px;
+	margin: 0;
+	margin-bottom: 2%;
+}
+
+.card {
+	box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+	padding: 10px;
+}
+
+.main-card {
+	padding: 50px;
+}
+
+.LogoImage {
+	width: 170px;
+	text-align: center;
+	margin: auto;
+}
+
+.col-md-4 {
+	text-align: center;
+}
+
+.col-md-4 h3 {
+	font-weight: 700;
+	font-size: 20px;
+	margin: 0px 0px 10px 0px;
+}
+
+/*=============Card1==============*/
+.col-md-4 .card1 {
+	margin: 9px 10px 34px 6px;
+	/* border: 2px solid #4BF5B8; */
+	color: #008454;
+	padding: 10px;
+	border-radius: 9px;
+	cursor: pointer;
+}
+
+.card1 img {
+	background: #4BF5B8;
+}
+
+.col-md-4 .card1:hover {
+	background: #4BF5B8;
+	color: #000;
+	box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+	transition: 500ms;
+}
+
+.card1:hover img {
+	background: white;
+	transition: 500ms;
+}
+
+/*=============Card2==============*/
+.col-md-4 .card2 {
+	margin: 9px 10px 34px 6px;
+	padding: 10px;
+	/* border: 2px solid #ffcc35; */
+	color: #c79500;
+	border-radius: 9px;
+	cursor: pointer;
+}
+
+.card2 img {
+	background: #ffcc35;
+}
+
+.col-md-4 .card2:hover {
+	background: #ffcc35;
+	color: #000;
+	box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+	transition: 500ms;
+}
+
+.card2:hover img {
+	background: white;
+	transition: 500ms;
+}
+
+
+/*=============Card3==============*/
+.col-md-4 .card3 {
+	margin: 9px 10px 34px 6px;
+	padding: 10px;
+	/* border: 2px solid #57cdff; */
+	color: #008bc6;
+	border-radius: 9px;
+	cursor: pointer;
+}
+
+.card3 img {
+	background: #57cdff;
+}
+
+.col-md-4 .card3:hover {
+	background: #57cdff;
+	color: #000;
+	box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+	transition: 500ms;
+}
+
+.card3:hover img {
+	background: white;
+	transition: 500ms;
+}
+
+
+/*=============Card4==============*/
+.col-md-4 .card4 {
+	margin: 9px 10px 34px 6px;
+	padding: 10px;
+	/* border: 2px solid #bc6aff; */
+	padding: 10px;
+	color: #6800be;
+	border-radius: 9px;
+	cursor: pointer;
+}
+
+.card4 img {
+	background: #bc6aff;
+}
+
+.col-md-4 .card4:hover {
+	background: #bc6aff;
+	color: #000;
+	box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+	transition: 500ms;
+}
+
+
+
+.card4:hover img {
+	background: white;
+	transition: 500ms;
+}
+
+
+/*=============Card5==============*/
+.col-md-4 .card5 {
+	/* margin: 9px 10px 34px 6px; */
+	margin: 9px 9px 15px 6px;
+	padding: 10px;
+	/* border: 2px solid #ff649f; */
+	color: #eb0059;
+	border-radius: 9px;
+	cursor: pointer;
+}
+
+.card5 img {
+	background: #ff649f;
+}
+
+.col-md-4 .card5:hover {
+	background: #ff649f;
+	color: #000;
+	box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+	transition: 500ms;
+}
+
+.card5:hover img {
+	background: white;
+	transition: 500ms;
+}
+
+
+/*=============Card6==============*/
+.col-md-4 .card6 {
+	margin: 9px 10px 34px 6px;
+	padding: 10px;
+	/* border: 2px solid #5fff95; */
+	color: #00ba3f;
+	border-radius: 9px;
+	cursor: pointer;
+}
+
+.card6 img {
+	background: #5fff95;
+}
+
+.col-md-4 .card6:hover {
+	background: #5fff95;
+	color: #000;
+	box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+	transition: 500ms;
+}
+
+.card6:hover img {
+	background: white;
+	transition: 500ms;
+}
+
+
+
+.buttonBtn button {
+	background: #efd042 !important;
+	color: #000;
+	border: none;
+	padding: 10px;
+
+}
+
+.cardImg {
+	width: 50px;
+	margin: auto;
+	padding: 15px;
+	border-radius: 100px;
+	margin-top: 15px;
+	margin-bottom: 15px;
+}
+
+
+
+object.cardImg {
+    background: wheat;
+}
+
+.overlay {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: rgba(0, 0, 0, 0.7);
+	transition: opacity 500ms;
+	visibility: visible;
+}
+
+.iframe.show {
+	display: block;
+}
+
+.iframe.show {
+	display: block;
+}
+
+.indicator_wifi {
+	display: flex;
+}
+
+.wifiIcon {
+	font-size: 22px;
+	color: green;
+}
+
+svg {
+	width: 50px;
+	height: auto;
+}
+
+.row{
+	/* display: flex;
+flex-direction: row;
+justify-content: space-evenly;
+align-items: center; */
+display: flex;
+flex-wrap: nowrap;
+justify-content: center;
+
+}
+
+
+
+@media (max-width: 520px) {
+.row{
+	display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    align-content: space-between;
+}
+	
+}

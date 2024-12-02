@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Company Settings</title>
+  <link rel="stylesheet" type="text/css" href="/CompanySettingCss.css">
+  <link rel="stylesheet" type="text/css" href="/styles.css">
+  <link rel="stylesheet" type="text/css" href="/RFID.css">
+  <script src="/quickSetting.js"></script>
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+</head>
+
+<body>
+  <div id="loader"></div>
+
+  <div class="toolBar">
+    <img src="/back" class="backImage" onclick="backSubmit()">
+    <h3 class="toolBar-header" onclick="HomePage()">RFID</h3>
+    <div></div>
+  </div>
+
+  <div class="container company-card">
+    <h3>Company Settings</h3>
+    <form onsubmit="Submit(event)" method="POST">
+      <div class="row">
+        <div class="col-50 sec_div_styles">
+          <label for="companyId">Company Id</label>
+          <input type="number" id="companyId" name="companyId" class="form-control" length="3" placeholder="Company Id">
+          </br>
+          <label for="companyName">Company Name</label>
+          <input type="text" id="companyName" class="form-control" name="companyName" placeholder="Company Name">
+          <input type="hidden" id="date" name="date">
+          <div class="col-50" style="text-align: center;">
+            <button type="submit" class="btn btn-primary submit-button" id="submit-button">Submit</button>
+          </div>
+        </div>
+      </div>
+    </form>
+    <!-- ************UPDATE SUCCESS MODAL************** -->
+    <div id="myModal_success" class="myModal_success">
+      <div class="modal-content">
+        <span class="close" onclick="PopupCancel()">&times;</span>
+        <div class="successTool">
+          <h3>Success</h3>
+        </div>
+        <div class="popImg">
+          <img src="/successImg" class="SuccessImg">
+        </div>
+        <div class="popupDiv" id="form">
+          <h3 class="SuccessText">Successfully Registered Company Settings</h3>
+        </div>
+        <div class="text-center">
+          <button class="btn-primary-Alertok" onclick="PopupCancel()">ok</button>
+        </div>
+      </div>
+    </div>
+    <!-- ************ ERROR MODAL************** -->
+    <div id="myModal_error" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="ErrorCancel()">&times;</span>
+        <div class="ErrorTool">
+          <h3>Error</h3>
+        </div>
+        <div class="popImg">
+        </div>
+        <div class="popupDiv" id="form">
+          <h3 class="ErrorText">Unable to Store Data</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function pwdfunc() {
+      window.location.replace('RFID.html');
+
+      var x = document.getElementById("myModal");
+      var pwd = "1996";
+      var newPwd = document.getElementById("password").value;
+      if (pwd === newPwd) {
+        alert("Your Password is" + newPwd)
+        x.style.display = "none";
+      } else {
+        document.getElementById("error1").innerHTML = "Incorrect Password";
+      }
+    }
+
+    function Submit(event) {
+      event.preventDefault();  // Prevent the default form submission
+      var today = new Date();
+      var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate() + 'T' + today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
+      var company_id = document.getElementById("companyId").value;
+      var company_name = document.getElementById("companyName").value;
+      var jsonData = {
+        date: date,
+        companyId: company_id,
+        companyName: company_name
+      };
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", '/submit-data', true); // Adjust the URL to your server endpoint
+      xhr.setRequestHeader('Content-Type', 'application/json'); // Set the content type to application/json
+      xhr.onload = function () {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          var load = document.getElementById('loader');
+          load.style.display = 'none';
+          var modal = document.getElementById('myModal_success');
+          modal.style.display = 'block';
+        } else {
+          var modal = document.getElementById('myModal_error');
+          modal.style.display = 'block';
+          console.error("Request failed with status:", xhr.status);
+        }
+        enableSubmitButton();  // Enable the submit button after the request is completed
+      };
+      var load = document.getElementById('loader');
+      load.style.display = 'block';
+      xhr.send(JSON.stringify(jsonData)); // Send the JSON data to the server
+
+      disableSubmitButton();  // Disable the submit button immediately
+    }
+
+    function disableSubmitButton() {
+      var submitButton = document.getElementById('submit-button');
+      submitButton.disabled = true;
+      setTimeout(enableSubmitButton, 10000);  // Re-enable the submit button after 10 seconds
+    }
+
+    function enableSubmitButton() {
+      var submitButton = document.getElementById('submit-button');
+      submitButton.disabled = false;
+    }
+
+    // Attach the Submit() function to the form's submit event
+    // document.addEventListener('DOMContentLoaded', function () {
+    //   var form = document.querySelector('form');
+    //   form.addEventListener('submit', Submit);
+    // });
+
+    function backSubmit() {
+      deviceIdSettings();
+    }
+
+    function ErrorCancel() {
+      location.replace("/CompanySettings");
+    }
+
+    function PopupCancel() {
+      deviceIdSettings();
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,767 @@
+/*
+#include <Arduino.h>
+#include <FS.h>
+#include <WiFi.h>
+#include <Adafruit_Fingerprint.h>
+
+HardwareSerial serialPort(2); // use UART2
+Adafruit_Fingerprint finger = Adafruit_Fingerprint(&serialPort);
+
+int getFingerprintIDez();
+void printHex(int num, int precision);
+uint8_t downloadFingerprintTemplate(uint16_t id);
+
+void setup()
+{
+    Serial.begin(115200);
+    Serial.println("Fingerprint template extractor");
+    serialPort.begin(57600, SERIAL_8N1, 16 , 17); // Initialize the R307 serial interface
+
+    // set the data rate for the sensor serial port
+    finger.begin(57600);
+
+    if (finger.verifyPassword())
+    {
+        Serial.println("Found fingerprint sensor!");
+    }
+    else
+    {
+        Serial.println("Did not find fingerprint sensor :(");
+        while (1)
+            ;
+    }
+
+    // Try to get the templates for fingers 1 through 10
+    for (int finger = 1; finger < 10; finger++)
+    {
+        downloadFingerprintTemplate(finger);
+    }
+}
+
+uint8_t downloadFingerprintTemplate(uint16_t id)
+{
+    Serial.println("------------------------------------");
+    Serial.print("Attempting to load #");
+    Serial.println(id);
+    uint8_t p = finger.loadModel(id);
+    switch (p)
+    {
+    case FINGERPRINT_OK:
+        Serial.print("Template ");
+        Serial.print(id);
+        Serial.println(" loaded");
+        break;
+    case FINGERPRINT_PACKETRECIEVEERR:
+        Serial.println("Communication error");
+        return p;
+    default:
+        Serial.print("Unknown error ");
+        Serial.println(p);
+        return p;
+    }
+
+    // OK success!
+
+    Serial.print("Attempting to get #");
+    Serial.println(id);
+    p = finger.getModel();
+    switch (p)
+    {
+    case FINGERPRINT_OK:
+        Serial.print("Template ");
+        Serial.print(id);
+        Serial.println(" transferring:");
+        break;
+    default:
+        Serial.print("Unknown error ");
+        Serial.println(p);
+        return p;
+    }
+
+    // one data packet is 267 bytes. in one data packet, 11 bytes are 'usesless' :D
+    uint8_t bytesReceived[534]; // 2 data packets
+    memset(bytesReceived, 0xff, 534);
+
+    uint32_t starttime = millis();
+    int i = 0;
+    while (i < 534 && (millis() - starttime) < 20000)
+    {
+        if (serialPort.available())
+        {
+            bytesReceived[i++] = serialPort.read();
+        }
+    }
+    Serial.print(i);
+    Serial.println(" bytes read.");
+    Serial.println("Decoding packet...");
+
+    uint8_t fingerTemplate[512]; // the real template
+    memset(fingerTemplate, 0xff, 512);
+
+    // filtering only the data packets
+    int uindx = 9, index = 0;
+    memcpy(fingerTemplate + index, bytesReceived + uindx, 256); // first 256 bytes
+    uindx += 256;                                               // skip data
+    uindx += 2;                                                 // skip checksum
+    uindx += 9;                                                 // skip next header
+    index += 256;                                               // advance pointer
+    memcpy(fingerTemplate + index, bytesReceived + uindx, 256); // second 256 bytes
+
+    for (int i = 0; i < 512; ++i)
+    {
+        // Serial.print("0x");
+        printHex(fingerTemplate[i], 2);
+        // Serial.print(", ");
+    }
+    Serial.println("\ndone.");
+
+    return p;
+
+    /*
+      uint8_t templateBuffer[256];
+      memset(templateBuffer, 0xff, 256);  //zero out template buffer
+      int index=0;
+      uint32_t starttime = millis();
+      while ((index < 256) && ((millis() - starttime) < 1000))
+      {
+      if (mySerial.available())
+      {
+        templateBuffer[index] = mySerial.read();
+        index++;
+      }
+      }
+
+      Serial.print(index); Serial.println(" bytes read");
+
+      //dump entire templateBuffer.  This prints out 16 lines of 16 bytes
+      for (int count= 0; count < 16; count++)
+      {
+      for (int i = 0; i < 16; i++)
+      {
+        Serial.print("0x");
+        Serial.print(templateBuffer[count*16+i], HEX);
+        Serial.print(", ");
+      }
+      Serial.println();
+      }
+}
+
+void printHex(int num, int precision)
+{
+    char tmp[16];
+    char format[128];
+
+    sprintf(format, "%%.%dX", precision);
+
+    sprintf(tmp, format, num);
+    Serial.print(tmp);
+}
+
+void loop()
+{
+}
+
+
+*/
+
+/*
+
+
+
+#include <Arduino.h>
+#include <Adafruit_Fingerprint.h>
+
+HardwareSerial serialPort(2); // use UART2
+
+Adafruit_Fingerprint finger = Adafruit_Fingerprint(&serialPort);
+
+uint8_t id;
+uint8_t getFingerprintID();
+
+void setup()
+{
+  Serial.begin(115200);
+  // For Yun/Leo/Micro/Zero/...
+  serialPort.begin(57600, SERIAL_8N1, 16 , 17); // Initialize the R307 serial interface
+
+  Serial.println("\n\nAdafruit Fingerprint sensor enrollment");
+
+  // set the data rate for the sensor serial port
+  finger.begin(57600);
+
+  if (finger.verifyPassword())
+  {
+    Serial.println("Found fingerprint sensor!");
+  }
+  else
+  {
+    Serial.println("Did not find fingerprint sensor :(");
+    while (1)
+    {
+      delay(1);
+    }
+  }
+
+  Serial.println(F("Reading sensor parameters"));
+  finger.getParameters();
+  Serial.print(F("Status: 0x"));
+  Serial.println(finger.status_reg, HEX);
+  Serial.print(F("Sys ID: 0x"));
+  Serial.println(finger.system_id, HEX);
+  Serial.print(F("Capacity: "));
+  Serial.println(finger.capacity);
+  Serial.print(F("Security level: "));
+  Serial.println(finger.security_level);
+  Serial.print(F("Device address: "));
+  Serial.println(finger.device_addr, HEX);
+  Serial.print(F("Packet len: "));
+  Serial.println(finger.packet_len);
+  Serial.print(F("Baud rate: "));
+  Serial.println(finger.baud_rate);
+}
+
+uint8_t readnumber(void)
+{
+  uint8_t num = 0;
+
+  while (num == 0)
+  {
+    while (!Serial.available())
+      ;
+    num = Serial.parseInt();
+  }
+  return num;
+}
+
+void loop() // run over and over again
+{
+  Serial.println("Ready to enroll a fingerprint!");
+  Serial.println("Please type in the ID # (from 1 to 127) you want to save this finger as...");
+  id = readnumber();
+  if (id == 0)
+  { // ID #0 not allowed, try again!
+    return;
+  }
+  Serial.print("Enrolling ID #");
+  Serial.println(id);
+
+  while (!getFingerprintID())
+    ;
+}
+
+
+uint8_t getFingerprintID()
+{
+    uint8_t p = finger.getImage();
+    switch (p)
+    {
+    case FINGERPRINT_OK:
+        Serial.println("Image taken");
+        break;
+    case FINGERPRINT_NOFINGER:
+        Serial.println("No finger detected");
+        return p;
+    case FINGERPRINT_PACKETRECIEVEERR:
+        Serial.println("Communication error");
+        return p;
+    case FINGERPRINT_IMAGEFAIL:
+        Serial.println("Imaging error");
+        return p;
+    default:
+        Serial.println("Unknown error");
+        return p;
+    }
+
+    // OK success!
+
+    p = finger.image2Tz();
+    switch (p)
+    {
+    case FINGERPRINT_OK:
+        Serial.println("Image converted");
+        break;
+    case FINGERPRINT_IMAGEMESS:
+        Serial.println("Image too messy");
+        return p;
+    case FINGERPRINT_PACKETRECIEVEERR:
+        Serial.println("Communication error");
+        return p;
+    case FINGERPRINT_FEATUREFAIL:
+        Serial.println("Could not find fingerprint features");
+        return p;
+    case FINGERPRINT_INVALIDIMAGE:
+        Serial.println("Could not find fingerprint features");
+        return p;
+    default:
+        Serial.println("Unknown error");
+        return p;
+    }
+
+    // OK converted!
+    p = finger.fingerSearch();
+    if (p == FINGERPRINT_OK)
+    {
+        Serial.println("Found a print match!");
+    }
+    else if (p == FINGERPRINT_PACKETRECIEVEERR)
+    {
+        Serial.println("Communication error");
+        return p;
+    }
+    else if (p == FINGERPRINT_NOTFOUND)
+    {
+        Serial.println("Did not find a match");
+        return p;
+    }
+    else
+    {
+        Serial.println("Unknown error");
+        return p;
+    }
+
+    // found a match!
+    Serial.print("Found ID #");
+    Serial.print(finger.fingerID);
+    Serial.print(" with confidence of ");
+    Serial.println(finger.confidence);
+    return finger.fingerID;
+}
+*/
+
+/*
+#include <WiFi.h>
+#include <ESPAsyncWebServer.h>
+#include <SPIFFS.h>
+#include <Adafruit_Fingerprint.h>
+
+HardwareSerial serialPort(2); // use UART2
+Adafruit_Fingerprint finger = Adafruit_Fingerprint(&serialPort);
+uint8_t getFingerprintEnroll();
+
+const char* ssid = "RfidPass";
+const char* password = "12345678";
+
+AsyncWebServer server(80);
+
+uint8_t id;
+String logs = "";
+
+void setup()
+{
+    Serial.begin(115200);
+    serialPort.begin(57600, SERIAL_8N1, 16, 17); // Initialize the R307 serial interface
+    delay(100);
+
+    if(!SPIFFS.begin(true)){
+        Serial.println("An Error has occurred while mounting SPIFFS");
+        return;
+    }
+    WiFi.softAP(ssid, password);
+    
+    Serial.println("Connected to WiFi");
+    Serial.println(WiFi.localIP());
+
+    server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+        request->send(SPIFFS, "/index.html", String(), false);
+    });
+
+    server.on("/logs", HTTP_GET, [](AsyncWebServerRequest *request){
+        String html = "<html><body>";
+        html += "<h1>Logs</h1>";getFingerprintEnroll();
+        html += logs;
+        html += "<br><a href=\"/\">Back</a>";
+        html += "</body></html>";
+        request->send(200, "text/html", html);
+    });
+
+    server.on("/register", HTTP_POST, [](AsyncWebServerRequest *request){
+        if (request->hasParam("id", true)) {
+            id = request->getParam("id", true)->value().toInt();
+            uint8_t result = getFingerprintEnroll();
+            if (result == FINGERPRINT_OK) {
+                logs += "ID " + String(id) + " registered at " + String(millis() / 1000) + " seconds<br>";
+                request->send(200, "text/html", "Registration successful!<br><a href=\"/\">Back</a>");
+            } else {
+                request->send(200, "text/html", "Registration failed!<br><a href=\"/\">Back</a>");
+            }
+        } else {
+            request->send(400, "text/html", "ID parameter missing!");
+        }
+    });
+
+    server.begin();
+    Serial.println("HTTP server started");
+
+    finger.begin(57600);
+    delay(5);
+    if (finger.verifyPassword()) {
+        Serial.println("Found fingerprint sensor!");
+    } else {
+        Serial.println("Did not find fingerprint sensor :(");
+        while (1) {
+            delay(1);
+        }
+    }
+}
+
+void loop() {
+    // Nothing to do here, everything is handled by async web server
+}
+
+uint8_t getFingerprintID()
+{
+    uint8_t p = finger.getImage();
+    switch (p)
+    {
+    case FINGERPRINT_OK:
+        Serial.println("Image taken");
+        break;
+    case FINGERPRINT_NOFINGER:
+        Serial.println("No finger detected");
+        return p;
+    case FINGERPRINT_PACKETRECIEVEERR:
+        Serial.println("Communication error");
+        return p;
+    case FINGERPRINT_IMAGEFAIL:
+        Serial.println("Imaging error");
+        return p;
+    default:
+        Serial.println("Unknown error");
+        return p;
+    }
+
+    // OK success!
+
+    p = finger.image2Tz();
+    switch (p)
+    {
+    case FINGERPRINT_OK:
+        Serial.println("Image converted");
+        break;
+    case FINGERPRINT_IMAGEMESS:
+        Serial.println("Image too messy");
+        return p;
+    case FINGERPRINT_PACKETRECIEVEERR:
+        Serial.println("Communication error");
+        return p;
+    case FINGERPRINT_FEATUREFAIL:
+        Serial.println("Could not find fingerprint features");
+        return p;
+    case FINGERPRINT_INVALIDIMAGE:
+        Serial.println("Could not find fingerprint features");
+        return p;
+    default:
+        Serial.println("Unknown error");
+        return p;
+    }
+
+    // OK converted!
+    p = finger.fingerSearch();
+    if (p == FINGERPRINT_OK)
+    {
+        Serial.println("Found a print match!");
+    }
+    else if (p == FINGERPRINT_PACKETRECIEVEERR)
+    {
+        Serial.println("Communication error");
+        return p;
+    }
+    else if (p == FINGERPRINT_NOTFOUND)
+    {
+        Serial.println("Did not find a match");
+        return p;
+    }
+    else
+    {
+        Serial.println("Unknown error");
+        return p;
+    }
+
+    // found a match!
+    Serial.print("Found ID #");
+    Serial.print(finger.fingerID);
+    Serial.print(" with confidence of ");
+    Serial.println(finger.confidence);
+    return finger.fingerID;
+}
+
+uint8_t getFingerprintEnroll()
+{
+
+  int p = -1;
+  Serial.print("Waiting for valid finger to enroll as #");
+  Serial.println(id);
+  while (p != FINGERPRINT_OK)
+  {
+    p = finger.getImage();
+    switch (p)
+    {
+    case FINGERPRINT_OK:
+      Serial.println("Image taken");
+      break;
+    case FINGERPRINT_NOFINGER:
+      Serial.println(".");
+      break;
+    case FINGERPRINT_PACKETRECIEVEERR:
+      Serial.println("Communication error");
+      break;
+    case FINGERPRINT_IMAGEFAIL:
+      Serial.println("Imaging error");
+      break;
+    default:
+      Serial.println("Unknown error");
+      break;
+    }
+  }
+
+  // OK success!
+
+  p = finger.image2Tz(1);
+  switch (p)
+  {
+  case FINGERPRINT_OK:
+    Serial.println("Image converted");
+    break;
+  case FINGERPRINT_IMAGEMESS:
+    Serial.println("Image too messy");
+    return p;
+  case FINGERPRINT_PACKETRECIEVEERR:
+    Serial.println("Communication error");
+    return p;
+  case FINGERPRINT_FEATUREFAIL:
+    Serial.println("Could not find fingerprint features");
+    return p;
+  case FINGERPRINT_INVALIDIMAGE:
+    Serial.println("Could not find fingerprint features");
+    return p;
+  default:
+    Serial.println("Unknown error");
+    return p;
+  }
+
+  Serial.println("Remove finger");
+  delay(2000);
+  p = 0;
+  while (p != FINGERPRINT_NOFINGER)
+  {
+    p = finger.getImage();
+  }
+  Serial.print("ID ");
+  Serial.println(id);
+  p = -1;
+  Serial.println("Place same finger again");
+  while (p != FINGERPRINT_OK)
+  {
+    p = finger.getImage();
+    switch (p)
+    {
+    case FINGERPRINT_OK:
+      Serial.println("Image taken");
+      break;
+    case FINGERPRINT_NOFINGER:
+      Serial.print(".");
+      break;
+    case FINGERPRINT_PACKETRECIEVEERR:
+      Serial.println("Communication error");
+      break;
+    case FINGERPRINT_IMAGEFAIL:
+      Serial.println("Imaging error");
+      break;
+    default:
+      Serial.println("Unknown error");
+      break;
+    }
+  }
+
+  // OK success!
+
+  p = finger.image2Tz(2);
+  switch (p)
+  {
+  case FINGERPRINT_OK:
+    Serial.println("Image converted");
+    break;
+  case FINGERPRINT_IMAGEMESS:
+    Serial.println("Image too messy");
+    return p;
+  case FINGERPRINT_PACKETRECIEVEERR:
+    Serial.println("Communication error");
+    return p;
+  case FINGERPRINT_FEATUREFAIL:
+    Serial.println("Could not find fingerprint features");
+    return p;
+  case FINGERPRINT_INVALIDIMAGE:
+    Serial.println("Could not find fingerprint features");
+    return p;
+  default:
+    Serial.println("Unknown error");
+    return p;
+  }
+
+  // OK converted!
+  Serial.print("Creating model for #");
+  Serial.println(id);
+
+  p = finger.createModel();
+  if (p == FINGERPRINT_OK)
+  {
+    Serial.println("Prints matched!");
+  }
+  else if (p == FINGERPRINT_PACKETRECIEVEERR)
+  {
+    Serial.println("Communication error");
+    return p;
+  }
+  else if (p == FINGERPRINT_ENROLLMISMATCH)
+  {
+    Serial.println("Fingerprints did not match");
+    return p;
+  }
+  else
+  {
+    Serial.println("Unknown error");
+    return p;
+  }
+
+  Serial.print("ID ");
+  Serial.println(id);
+  p = finger.storeModel(id);
+  if (p == FINGERPRINT_OK)
+  {
+    Serial.println("Stored!");
+  }
+  else if (p == FINGERPRINT_PACKETRECIEVEERR)
+  {
+    Serial.println("Communication error");
+    return p;
+  }
+  else if (p == FINGERPRINT_BADLOCATION)
+  {
+    Serial.println("Could not store in that location");
+    return p;
+  }
+  else if (p == FINGERPRINT_FLASHERR)
+  {
+    Serial.println("Error writing to flash");
+    return p;
+  }
+  else
+  {
+    Serial.println("Unknown error");
+    return p;
+  }
+
+  return true;
+}
+*/
+
+#include <Wire.h>
+#include <RTClib.h>
+#include <Adafruit_Fingerprint.h>
+#include <FS.h>
+#include <SPIFFS.h>
+
+// Define the fingerprint sensor pins
+#define RX_PIN 16  // RX pin of Fingerprint Sensor to GPIO16 (ESP32)
+#define TX_PIN 17  // TX pin of Fingerprint Sensor to GPIO17 (ESP32)
+
+// Create RTC3231 object
+RTC_DS3231 rtc;
+
+// Create a Serial object for the fingerprint sensor
+Adafruit_Fingerprint finger = Adafruit_Fingerprint(&Serial1);
+
+void setup() {
+  Serial.begin(115200);
+
+  // Initialize SPIFFS
+  if (!SPIFFS.begin(true)) {
+    Serial.println("Failed to mount file system");
+    return;
+  }
+
+  // Open or create the CSV file
+  File dataFile = SPIFFS.open("/log.csv", FILE_WRITE);
+  if (dataFile) {
+    // Check if the file is empty, if yes, write the header
+    if (dataFile.size() == 0) {
+      dataFile.println("empid,time");
+    }
+    dataFile.close();
+  } else {
+    Serial.println("Error opening log.csv");
+  }
+
+  // Initialize RTC
+  if (!rtc.begin()) {
+    Serial.println("Couldn't find RTC");
+    while (1);
+  }
+
+  // Check if RTC is connected
+  if (rtc.lostPower()) {
+    Serial.println("RTC lost power, setting the time!");
+    // The following line sets the RTC to the date & time this sketch was compiled
+    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+  }
+
+  // Initialize fingerprint sensor
+  Serial1.begin(57600, SERIAL_8N1, RX_PIN, TX_PIN); // RX and TX for fingerprint sensor
+  if (finger.verifyPassword()) {
+    Serial.println("Found fingerprint sensor!");
+  } else {
+    Serial.println("Did not find fingerprint sensor :(");
+    while (1);
+  }
+}
+
+void loop() {
+  int fingerID = getFingerprintID();
+  if (fingerID != -1) {
+    DateTime now = rtc.now();
+    String dateTimeString = String(now.year()) + "-" + String(now.month()) + "-" + String(now.day()) + " " +
+                            String(now.hour()) + ":" + String(now.minute()) + ":" + String(now.second());
+    
+    // Open the CSV file
+    File dataFile = SPIFFS.open("/log.csv", FILE_APPEND);
+    if (dataFile) {
+      dataFile.print("198");
+      dataFile.print(",");
+      dataFile.println(dateTimeString);
+      dataFile.close();
+      Serial.print("Logged ID #");
+      Serial.print(fingerID);
+      Serial.print(" with confidence of ");
+      Serial.print(finger.confidence);
+      Serial.print(" at ");
+      Serial.println(dateTimeString);
+      Serial.println("Written in csv file ");
+    } else {
+      Serial.println("Error opening log.csv");
+    }
+  }
+
+  delay(1000); // Delay between fingerprint checks
+}
+
+int getFingerprintID() {
+  uint8_t id = finger.getImage();
+  if (id != FINGERPRINT_OK) {
+    Serial.println("Image capture failed");
+    return -1;
+  }
+
+  id = finger.image2Tz();
+  if (id != FINGERPRINT_OK) {
+    Serial.println("Image conversion failed");
+    return -1;
+  }
+
+  id = finger.fingerSearch();
+  if (id == FINGERPRINT_OK) {
+    return finger.fingerID;
+  } else {
+    Serial.println("No match found");
+    return -1;
+  }
+}

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>WiFi Settings</title>
+    <link rel="stylesheet" type="text/css" href="/WifiCss.css">
+    <link rel="stylesheet" type="text/css" href="/styles.css">
+    <script src="/quickSetting.js"></script>
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+</head>
+
+<body>
+    <div id="loader"></div>
+    <div class="toolBar">
+        <img src="/back" class="backImage" onclick="backSubmit()">
+        <h3 class="toolBar-header" onclick="HomePage()">RFID</h3>
+        <div></div>
+    </div>
+    <div class="container">
+        <div class="card wifiCard">
+            <div class="header_wifi">
+                <div></div>
+                <h3>WIFI Settings</h3>
+                <img src="/resetImg" onclick="fetchWifiData()" class="wifiReset">
+            </div>
+            <div class="card">
+                <label for="ssidSelect">Available Networks:</label>
+                <select id="ssidSelect" class="form-select form-control" onchange="updateSSIDInput()">
+                    <option disabled selected>Select an SSID</option>
+                </select>
+            </div>
+        </div>
+        <form onsubmit="event.preventDefault(); Wifi_submit();" method="post">
+            <div class="card wifiCard2">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="ssidInput">SSID</label>
+                        <input type="text" id="ssidInput" name="ssid" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="password">Password</label>
+                        <div class="password-container">
+                            <input type="password" id="password" name="password" class="form-control">
+                            <button type="button" class="toggle-password" onclick="togglePassword()">👁️</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary submit-button">Submit</button>
+                </div>
+            </div>
+        </form>
+        <!-- ************UPDATE SUCCESS MODAL************** -->
+        <div id="myModal_success" class="myModal_success">
+            <div class="modal-content_main">
+                <div class="successTool">
+                    <span class="close" onclick="PopupCancel()">&times;</span>
+                    <h3>Success</h3>
+                </div>
+                <div class="popImg">
+                    <img src="/successImg" class="SuccessImg">
+                </div>
+                <div class="popupDiv" id="form">
+                    <h3 class="SuccessText">Successfully Registered</h3>
+                </div>
+                <div class="text-center">
+                    <button class="btn-primary-Alertok" onclick="PopupCancel()">ok</button>
+                </div>
+            </div>
+        </div>
+        <!-- ************ ERROR MODAL************** -->
+        <div id="myModal_error" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="ErrorCancel()">&times;</span>
+                <div class="ErrorTool">
+                    <h3>Note</h3>
+                </div>
+                <div class="popImg"></div>
+                <div class="popupDiv" id="form">
+                    <h3 class="ErrorText">Password is Incorrect Kindly Enter Again ..</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function HomePage() {
+            location.replace("/");
+        }
+
+        function backSubmit() {
+            location.replace("/");
+        }
+
+        function ErrorCancel() {
+            location.replace("/WifiSetting");
+        }
+
+        function updateSSIDInput() {
+            var ssidSelect = document.getElementById('ssidSelect');
+            var ssidInput = document.getElementById('ssidInput');
+            ssidInput.value = ssidSelect.options[ssidSelect.selectedIndex].value;
+        }
+
+        function fetchWifiData() {
+            fetch('/get-wifi-data')
+                .then(response => response.json())
+                .then(data => {
+                    const ssidSelectElement = document.getElementById('ssidSelect');
+                    ssidSelectElement.innerHTML = ''; // Clear current options
+
+                    // Add default disabled option
+                    const defaultOption = document.createElement('option');
+                    defaultOption.disabled = true;
+                    defaultOption.selected = true;
+                    defaultOption.textContent = 'Select an SSID';
+                    ssidSelectElement.appendChild(defaultOption);
+
+                    // Populate with fetched data
+                    data.forEach(network => {
+                        const optionItem = document.createElement('option');
+                        optionItem.textContent = `${network.ssid} (Signal: ${network.rssi} dBm)`;
+                        optionItem.value = network.ssid;
+                        ssidSelectElement.appendChild(optionItem);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching Wi-Fi data:', error);
+                });
+        }
+
+        function Wifi_submit() {
+            var ssid = document.getElementById("ssidInput").value;
+            var pass = document.getElementById("password").value;
+            if (ssid.trim() === '' || pass.trim() === '') {
+                alert("SSID and Password cannot be empty!");
+                return;
+            }
+            var jsonData = {
+                SSID: ssid,
+                PASSWORD: pass
+            };
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "/Wifi_submit", true);
+            xhttp.onload = function () {
+                if (xhttp.status >= 200 && xhttp.status < 300) {
+                    console.log("connected");
+                    var load = document.getElementById('loader');
+                    load.style.display = 'none';
+                    var modal = document.getElementById('myModal_success');
+                    modal.style.display = 'block';
+                }
+                else if (xhttp.status == 300) {
+                    // myModal_error
+                    var modal = document.getElementById('myModal_error');
+                    modal.style.display = 'block';
+                }
+
+                else {
+                    console.error("request failed with status:", xhttp.status);
+                }
+            }
+            var load = document.getElementById('loader');
+            load.style.display = 'block';
+            xhttp.send(JSON.stringify(jsonData));
+        }
+
+        function togglePassword() {
+            var passwordInput = document.getElementById('password');
+            var toggleButton = document.querySelector('.toggle-password');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleButton.textContent = '👁️'; // :)
+            } else {
+                passwordInput.type = 'password';
+                toggleButton.textContent = '👁️‍🗨️'; // Eye is closed ;)
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchWifiData();
+        });
+
+        function PopupCancel() {
+            companyIdSettings();
+        }
+    </script>
+</body>
+
+</html>

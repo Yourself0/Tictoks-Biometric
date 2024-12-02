@@ -1,0 +1,317 @@
+Attempting to load #1
+Template 1 loaded
+Attempting to get #1
+Template 1 transferring:
+it was false man 
+534 bytes read.
+Decoding packet...
+03014D2F7B00FFFEF0FEF07EC000C0008000File Does Not Exist
+End of send server 
+8000800080008000000000000000000000000000000000000000000000000000000000000000408E903E311E8DBE1C23CE3E73278CBE642960BE1FB90B1E3EBC083E39412CBE3B1D0D7F5BA10A3F27B609DF31C3201769145ADC0E3AA49C282C8C7D0AB7CC9D16BE0ADD5829877A25A5EF01FFFFFFFF020082352B0BBA49C09F3A569ACE9B5F2F5F535943239329948EB82C15E5F853AB889870AD63584AAE0A184FAE08F86B2E623861321F524E3F60193DA88C563AA9A316212B0D567330CE565B9B4C57543CDFD77031E3F45BB51EB473B66473273F8C5024C3E34B6637E42B713B81C85F3C0C0761BBE28400311BEF01FFFFFFFF0200820301452C7B00FFFEFC06F802F802E000E000E000C000C000C000C000000000000000C000C000C0000000000000000000000000000000000038148E3E2A23CC7E1BA44D9E23AF8B3E43B3C83E42938DDF581E8A1F3CA04C1F2BAC8A7F6C406C7F6D9CCA3C662188BC6DB1699C18328EBC723AD4FA51419CDA4EA649DB1FBF9D9B2E96EF01FFFFFFFF080082628DD1986C2060781CB6095812B7E5386E3898782EB91FF8542648791A3D1ED356421839611A4AD65AA787D61C3AC8965B2660171737CAD7393C87B7603FC2373AC358742CBA48356AA79F123C41DC7363B99C315E91CE8F6C96094C77A523AC353DDF8C76A9D0060000
+done.
+------------------------------------
+Attempting to load #2
+Unknown error 12
+------------------------------------
+Attempting to load #3
+Template 3 loaded
+Attempting to get #3
+Template 3 transferring:
+534 bytes read.
+Decoding packet...
+030141228700FFFEFFFEFFFEFF06E000C000C000C000C000C000C000C0000000000000000000000000000000000000000000000000000000421A289E4F1C2BBE691C837E5CA042DE4C252C5E712986BE512C439E18B18DBE76B3093E2F33CCBE113664D61E2925DF6AB4CA7F33B7A3BF72BE0C3D56B60D5A48304FFB7042A1FB2CC8EF01FFFFFFFF0200824EB1C6590D41A17363380A3616C1A83650B40C575F380AD74CB44ED411C0E434533E684F312B66F2113CE3D257BC91CC1D3F106D69C020EF3E3E284D3B41E5C800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001B17EF01FFFFFFFF020082030155308A000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200B689E148BA81E3F182BFE3AA0AC9E1822283E0FA266BE04AB4D9E3014A9DF4A9B821F3B26C21F6C97855E579883DE622F495E56314ADF6CBCCB3F2133259C7AAC08BD79C08B591EE1EF01FFFFFFFF0800821939D0112F06122E31ACD18E1DACCCCF10AE0F6F29B0278F2F06122E4833CBAE5E2586EE5D394B6F5E2586EE61C1228E44364DED442ECAEC4C3208CA3E3194EB18B5238A75BE8B8A3A340D483294A9C659C128873128AA85312BABA532AB8F4542320BA42B394D6548BF
+done.
+------------------------------------
+Attempting to load #4
+Unknown error 12
+------------------------------------
+Attempting to load #5
+Unknown error 12
+------------------------------------
+Attempting to load #6
+Unknown error 12
+------------------------------------
+Attempting to load #7
+Unknown error 12
+------------------------------------
+Attempting to load #8
+Unknown error 12
+------------------------------------
+Attempting to load #9
+Unknown error 12
+------------------------------------
+Attempting to load #10
+Unknown error 12
+------------------------------------
+Attempting to load #11
+Unknown error 12
+------------------------------------
+Attempting to load #12
+Unknown error 12
+------------------------------------
+Attempting to load #13
+Unknown error 12
+------------------------------------
+Attempting to load #14
+Unknown error 12
+------------------------------------
+Attempting to load #15
+Unknown error 12
+------------------------------------
+Attempting to load #16
+Unknown error 12
+------------------------------------
+Attempting to load #17
+Unknown error 12
+------------------------------------
+Attempting to load #18
+Unknown error 12
+------------------------------------
+Attempting to load #19
+Unknown error 12
+------------------------------------
+Attempting to load #20
+Unknown error 12
+------------------------------------
+Attempting to load #21
+Unknown error 12
+------------------------------------
+Attempting to load #22
+Unknown error 12
+------------------------------------
+Attempting to load #23
+Unknown error 12
+------------------------------------
+Attempting to load #24
+Unknown error 12
+------------------------------------
+Attempting to load #25
+Unknown error 12
+------------------------------------
+Attempting to load #26
+Template 26 loaded
+Attempting to get #26
+Template 26 transferring:
+534 bytes read.
+Decoding packet...
+03013F228900000000000000000000000000000000000000000000000000000000000000000080020000000000000000000000000000000068879C3E538B06BE410CD91E5C9B4ADE1A9FCC5E72B4A45E26B5071E093947FE6341E91E4487D95F770947F73D93579F27218BBF5CA64D3F272BA13F602F8F7F3A3083FF1DB4481F1F99EF01FFFFFFFF0200822ABC5D3F6C3F295F240FD2FC2513911C702A093C722D609550A19F3B58BA10B13B3D5D313D38DCB454B852D547229E7348A51D0D4EA5613339A4862F30234AAD00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001862EF01FFFFFFFF020082030145208600001E001E001E001E001E001E001E001E001E001E001E003E003E007E007E807EC1FE000000000000000000000000000000001484D8FE3984DBF65184C71E4707865E2408C61E138AD87E5018083E2F18CA7E52A38A3E352F4F5E101197BF239FDF5F30248CFF0D2F043F4CB58F172B40A99F1A1B491B4C0D871821A8EF01FFFFFFFF0800820D1A45F80BBBDCF84F0C5D790CB88577181E5C1417285F353A3D9113133D5D302223E10D17A549CD161F484F08A3C82F27A892AF1A279E260000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+done.
+------------------------------------
+Attempting to load #27
+Unknown error 12
+------------------------------------
+Attempting to load #28
+Unknown error 12
+------------------------------------
+Attempting to load #29
+Unknown error 12
+------------------------------------
+Attempting to load #30
+Unknown error 12
+------------------------------------
+Attempting to load #31
+Unknown error 12
+------------------------------------
+Attempting to load #32
+Unknown error 12
+------------------------------------
+Attempting to load #33
+Unknown error 12
+------------------------------------
+Attempting to load #34
+Unknown error 12
+------------------------------------
+Attempting to load #35
+Unknown error 12
+------------------------------------
+Attempting to load #36
+Unknown error 12
+------------------------------------
+Attempting to load #37
+Unknown error 12
+------------------------------------
+Attempting to load #38
+Unknown error 12
+------------------------------------
+Attempting to load #39
+Unknown error 12
+------------------------------------
+Attempting to load #40
+Unknown error 12
+------------------------------------
+Attempting to load #41
+Unknown error 12
+------------------------------------
+Attempting to load #42
+Unknown error 12
+------------------------------------
+Attempting to load #43
+Unknown error 12
+------------------------------------
+Attempting to load #44
+Unknown error 12
+------------------------------------
+Attempting to load #45
+Unknown error 12
+------------------------------------
+Attempting to load #46
+Unknown error 12
+------------------------------------
+Attempting to load #47
+Unknown error 12
+------------------------------------
+Attempting to load #48
+Unknown error 12
+------------------------------------
+Attempting to load #49
+Unknown error 12
+------------------------------------
+Attempting to load #50
+Unknown error 12
+------------------------------------
+Attempting to load #51
+Unknown error 12
+------------------------------------
+Attempting to load #52
+Unknown error 12
+------------------------------------
+Attempting to load #53
+Unknown error 12
+------------------------------------
+Attempting to load #54
+Unknown error 12
+------------------------------------
+Attempting to load #55
+Unknown error 12
+------------------------------------
+Attempting to load #56
+Unknown error 12
+------------------------------------
+Attempting to load #57
+Unknown error 12
+------------------------------------
+Attempting to load #58
+Unknown error 12
+------------------------------------
+Attempting to load #59
+Unknown error 12
+------------------------------------
+Attempting to load #60
+Unknown error 12
+------------------------------------
+Attempting to load #61
+Unknown error 12
+------------------------------------
+Attempting to load #62
+Unknown error 12
+------------------------------------
+Attempting to load #63
+Unknown error 12
+------------------------------------
+Attempting to load #64
+Unknown error 12
+------------------------------------
+Attempting to load #65
+Unknown error 12
+------------------------------------
+Attempting to load #66
+Unknown error 12
+------------------------------------
+Attempting to load #67
+Unknown error 12
+------------------------------------
+Attempting to load #68
+Unknown error 12
+------------------------------------
+Attempting to load #69
+Unknown error 12
+------------------------------------
+Attempting to load #70
+Unknown error 12
+------------------------------------
+Attempting to load #71
+Unknown error 12
+------------------------------------
+Attempting to load #72
+Unknown error 12
+------------------------------------
+Attempting to load #73
+Unknown error 12
+------------------------------------
+Attempting to load #74
+Unknown error 12
+------------------------------------
+Attempting to load #75
+Unknown error 12
+------------------------------------
+Attempting to load #76
+Unknown error 12
+------------------------------------
+Attempting to load #77
+Unknown error 12
+------------------------------------
+Attempting to load #78
+Unknown error 12
+------------------------------------
+Attempting to load #79
+Unknown error 12
+------------------------------------
+Attempting to load #80
+Unknown error 12
+------------------------------------
+Attempting to load #81
+Unknown error 12
+------------------------------------
+Attempting to load #82
+Unknown error 12
+------------------------------------
+Attempting to load #83
+Unknown error 12
+------------------------------------
+Attempting to load #84
+Unknown error 12
+------------------------------------
+Attempting to load #85
+Unknown error 12
+------------------------------------
+Attempting to load #86
+Unknown error 12
+------------------------------------
+Attempting to load #87
+Unknown error 12
+------------------------------------
+Attempting to load #88
+Unknown error 12
+------------------------------------
+Attempting to load #89
+Unknown error 12
+------------------------------------
+Attempting to load #90
+Unknown error 12
+------------------------------------
+Attempting to load #91
+Unknown error 12
+------------------------------------
+Attempting to load #92
+Unknown error 12
+------------------------------------
+Attempting to load #93
+Unknown error 12
+------------------------------------
+Attempting to load #94
+Unknown error 12
+------------------------------------
+Attempting to load #95
+Unknown error 12
+------------------------------------
+Attempting to load #96
+Unknown error 12
+------------------------------------
+Attempting to load #97
+Unknown error 12
+------------------------------------
+Attempting to load #98
+Unknown error 12
+------------------------------------
+Attempting to load #99
+Unknown error 12

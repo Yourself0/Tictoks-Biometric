@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+  <link rel="stylesheet" type="text/css" href="/CompanySettingCss.css">
+  <link rel="stylesheet" type="text/css" href="/styles.css">
+  <link rel="stylesheet" type="text/css" href="/RFID.css">
+  <script src="/quickSetting.js"></script>
+
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+</head>
+
+<body>
+  <div id="loader"></div>
+  <div class="toolBar">
+    <img src="/back" class="backImage" onclick="backSubmit()">
+    <h3 class="toolBar-header" onclick="HomePage()">RFID</h3>
+    <div></div>
+  </div>
+  <div class="container company-card">
+    <h3>Device Id Settings</h3>
+    <form onsubmit="Submit(event)" method="POST">
+      <div class="row">
+        <div class="col-50">
+          <label for="DeviceId">Device Id</label>
+          <select id="DeviceId" name="DeviceId" class="form-control">
+          </select>
+          <div class="col-50" style="text-align: center;">
+            <button type="submit" class="btn btn-primary submit-button">Submit</button>
+          </div>
+        </div>
+      </div>
+    </form>
+    <!-- ************UPDATE SUCCESS MODAL************** -->
+    <div id="myModal_success" class="myModal_success">
+      <div class="modal-content">
+        <span class="close" onclick="PopupCancel()">&times;</span>
+        <div class="successTool">
+
+          <h3>Success</h3>
+        </div>
+        <div class="popImg">
+          <img src="/successImg" class="SuccessImg">
+        </div>
+        <div class="popupDiv" id="form">
+          <h3 class="SuccessText">Successfully Registered Device</h3>
+        </div>
+        <div class="text-center">
+          <button class="btn-primary-Alertok" onclick="PopupCancel()">ok</button>
+        </div>
+      </div>
+    </div>
+    <!-- ************ ERROR MODAL************** -->
+    <div id="myModal_error" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="ErrorCancel()">&times;</span>
+        <div class="ErrorTool">
+          <h3>Error</h3>
+        </div>
+        <div class="popImg">
+        </div>
+        <div class="popupDiv" id="form">
+          <h3 class="ErrorText">Unable to connect Server Check Your Network</h3>
+        </div>
+      </div>
+    </div>
+
+    <!-- ************ ERROR MODAL************** -->
+    <div id="myModal_noData" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="NoDataSubmit()">&times;</span>
+        <div class="ErrorTool">
+          <h3>Error</h3>
+        </div>
+        <div class="popImg">
+        </div>
+        <div class="popupDiv" id="form">
+          <h3 class="ErrorText">Device Id is not Available to Configure</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <script>
+    function Submit(event) {
+      event.preventDefault();  // Prevent the default form submission
+      var Device_id = document.getElementById("DeviceId").value;
+      console.log(Device_id);
+      if (Device_id !== "" & Device_id !== "Device ID is not available") {
+        // console.log(Device_id);
+        var jsonData = {
+          DeviceId: Device_id
+        };
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", '/Device_id', true); // Adjust the URL to your server endpoint
+        xhr.onload = function () {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            load.style.display = 'none';
+            var modal = document.getElementById('myModal_success');
+            modal.style.display = 'block';
+          }
+          if (xhr.status == 606) {
+            var model = document.getElementById("myModal_noData");
+            model.style.display = "block";
+          }
+          else {
+            console.error("Request failed with status:", xhr.status);
+          }
+        };
+        var load = document.getElementById('loader');
+        load.style.display = 'block';
+        xhr.send(JSON.stringify(jsonData)); // Send the JSON data to the server
+      }
+      else {
+        var model = document.getElementById("myModal_noData");
+        model.style.display = "block";
+      }
+    }
+
+    // function fetchDeviceIDs() {
+    //   var load = document.getElementById('loader');
+    //   load.style.display = 'block';
+    //   fetch("/DeviceIDList")
+    //     .then(response => response.json())
+    //     .then(data => {
+    //       // Get the select element
+    //       load.style.display = 'none';
+    //       var selectElement = document.getElementById("DeviceId");
+    //       // Clear existing options
+    //       selectElement.innerHTML = "";
+    //       // Create and append new options based on the received data
+    //       // data.forEach(DeviceId => {
+    //       //   var option = document.createElement("option");
+    //       //   option.value = DeviceId.deviceId;
+    //       //   option.text = `${DeviceId.deviceId} ${DeviceId.description}`;
+    //       //   selectElement.appendChild(option);
+    //       // });
+    //       data.forEach(DeviceId => {
+    //         let dataLength = data.length();
+    //         if(dataLength>0){
+    //         var option = document.createElement("option");
+    //         option.value = DeviceId.deviceId;
+    //         // Check if description is defined before setting option text
+    //         if (DeviceId.description !== undefined) {
+    //           option.text = `${DeviceId.deviceId} ${DeviceId.description}`;
+    //         } else {
+    //           option.text = `${DeviceId.deviceId} ${"(Not Named)"}`;
+    //         }
+    //         selectElement.appendChild(option);
+    //       }
+    //       else{
+    //         var option = document.createElement("option");
+    //         option.text =`Device id is Not Available`
+    //         selectElement.appendChild(option);
+    //       }
+    //       });
+    //     })
+    //     .catch(error => {
+    //       console.error('Error fetching Device Id data:', error);
+    //       // var modal = document.getElementById('myModal_error');
+    //       // modal.style.display = 'block';
+    //     });
+    // }
+    function fetchDeviceIDs() {
+  var load = document.getElementById('loader');
+  load.style.display = 'block';
+
+  fetch("/DeviceIDList")
+    .then(response => response.json())
+    .then(data => {
+      load.style.display = 'none';
+
+      // Get the select element
+      var selectElement = document.getElementById("DeviceId");
+
+      // Clear existing options
+      selectElement.innerHTML = "";
+
+      if (data.length > 0) {
+        // Create and append new options based on the received data
+        data.forEach(DeviceId => {
+          var option = document.createElement("option");
+          option.value = DeviceId.deviceId;
+
+          // Use a fallback value in case description is null or undefined
+          var descriptionText = DeviceId.description || "(Not Named)";
+          option.text = `${DeviceId.deviceId} ${descriptionText}`;
+
+          selectElement.appendChild(option);
+        });
+      } else {
+        // Add an option saying "Device ID is not available" and disable it
+        var option = document.createElement("option");
+        option.text = "Device ID is not available";
+        option.disabled = true;
+        option.selected = true;
+        selectElement.appendChild(option);
+      }
+
+/*
+      if (data.length > 0) {
+        // Create and append new options based on the received data
+        data.forEach(DeviceId => {
+          var option = document.createElement("option");
+          option.value = DeviceId.deviceId;
+
+          // Check if description is defined before setting option text
+          if (DeviceId.description !== undefined|| DeviceId.description !== null) {
+            option.text = `${DeviceId.deviceId} ${DeviceId.description}`;
+          } else {
+            option.text = `${DeviceId.deviceId} (Not Named)`;
+          }
+
+          selectElement.appendChild(option);
+        });
+      } else {
+        // Add an option saying "Device ID is not available" and disable it
+        var option = document.createElement("option");
+        option.text = "Device ID is not available";
+        option.disabled = true;
+        option.selected = true;
+        selectElement.appendChild(option);
+        */
+      
+    })
+    .catch(error => {
+      load.style.display = 'none';
+      console.error('Error fetching Device Id data:', error);
+    });
+}
+    document.addEventListener("DOMContentLoaded", fetchDeviceIDs);
+    function backSubmit() {
+      location.replace("/")
+    }
+    //       PopupCancel
+    function PopupCancel() {
+      location.replace("/")
+    }
+    function ErrorCancel() {
+      location.replace("/WifiSetting")
+    }
+    function NoDataSubmit() {
+      location.replace("/")
+    }
+
+  </script>
+</body>
+
+</html>
+<!-- Device id is Not Available Configured -->
