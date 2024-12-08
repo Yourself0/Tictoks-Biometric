@@ -12,14 +12,17 @@ IT'S BORING I KNEW IT
 #include <ESPmDNS.h>
 #include <SPIFFS.h>
 #include <Wire.h>
+#include "urls.h"
 #include <stdio.h>
 #include <vector>
 #include "mbedtls/base64.h"
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
+#include <PubSubClient.h>
 #include <esp_task_wdt.h>
 #include <ESPAsyncWebServer.h>
 #include <Adafruit_Fingerprint.h>
+#include <HTTPUpdate.h>
 
 #define Relay 4
 #define Buzzer 15
@@ -68,6 +71,8 @@ int FingerPrintId = 0;
 const char *ASSID = "Tictoks Biometric V1";
 const char *APASS = "123456789";
 
+const String FirmwareVer = {"0.1"};
+
 String CompanyId = "";
 String CompanyName = "";
 String DeviceType = "Biometric";
@@ -97,6 +102,9 @@ WiFiClient client;
 HardwareSerial serialPort(2); // use UART2
 Adafruit_Fingerprint finger = Adafruit_Fingerprint(&serialPort);
 
+WiFiClient espClient;
+PubSubClient clients(espClient);
+
 bool matchRfid(int id);
 uint8_t id;
 uint8_t getNextFreeID();
@@ -114,6 +122,7 @@ void SensorFingerBegin();
 void DeviceIdInitialize();
 void WifiStatusConnected();
 void UnauthorizedAccess();
+void FirmwareUpdate();
 void registerSendtoBios();
 void ledFetchingon();
 void ledFetchingoff();
@@ -430,7 +439,7 @@ void SdOfflineData(void *parameter)
                   Serial.print("JSON MESSAGE server send");
                   Serial.println(JSONmessageBuffer);
 
-                  http.begin("http://letzcheckin.com:8080/EmployeeAttendenceAPI/employee/EmployeeCheckInOut");
+                  http.begin("http://3.6.171.29:8080/EmployeeAttendenceAPI/employee/EmployeeCheckInOut");
                   http.addHeader("Content-Type", "application/json");
                   Serial.println("Here after content type");
                   int httpCode = http.POST(JSONmessageBuffer);
@@ -538,11 +547,17 @@ void updateEmployeeDetails(void *pvParameters)
   {
     // Wait for 5 hours
     Serial.println("first delay started");
-    // vTaskDelay(pdMS_TO_TICKS(60000)); // Delay for 10 minutes
-    
+    vTaskDelay(pdMS_TO_TICKS(60000)); // Delay for 10 minutes
+
     vTaskDelay(pdMS_TO_TICKS(600000)); // Delay for 10 minutes
     Serial.println("first delay Ended");
     Serial.println("second Delay");
+    vTaskDelay(pdMS_TO_TICKS(600000)); // Delay for 10 minutes
+    Serial.println("Third Delay");
+    vTaskDelay(pdMS_TO_TICKS(600000)); // Delay for 10 minutes
+    Serial.println("Fourth Delay");
+    vTaskDelay(pdMS_TO_TICKS(600000)); // Delay for 10 minutes
+    Serial.println("Fifth Delay");
     vTaskDelay(pdMS_TO_TICKS(600000)); // Delay for 10 minutes
     Serial.println("Second delay Ended");
 
@@ -553,17 +568,24 @@ void updateEmployeeDetails(void *pvParameters)
       if (client.connect("www.google.com", 80))
       {
         // Call CheckNullonServerRfidInitialFetch and check if data exists
-        bool hasData = CheckNullonServerRfidInitialFetch();
-        if (hasData)
+        if (CompanyId == "002")
         {
-          Serial.println("Data fetched from server. Removing files...");
-          SPIFFS.remove("/EmpRfid.csv");
-          SPIFFS.remove("/Rfid.csv");
-          Serial.println("Files removed.");
+          bool hasData = CheckNullonServerRfidInitialFetch();
+          if (hasData)
+          {
+            Serial.println("Data fetched from server. Removing files...");
+            SPIFFS.remove("/EmpRfid.csv");
+            SPIFFS.remove("/Rfid.csv");
+            Serial.println("Files removed.");
+          }
+          else
+          {
+            Serial.println("No data to update. Skipping file removal.");
+            ledFetchingoff();
+          }
         }
-        else
-        {
-          Serial.println("No data to update. Skipping file removal.");
+        else{
+          Serial.println("SKIPPED due to 002 ssn");
         }
       }
       else
@@ -580,7 +602,6 @@ void updateEmployeeDetails(void *pvParameters)
     RestartEsp();
   }
 }
-
 
 // Update task multiple ...
 // remove the finger checker condition...
@@ -796,14 +817,13 @@ void initializeCoreWork()
 
   // Uncomment this if needed, with appropriate priority
   xTaskCreate(
-      updateEmployeeDetails,  // Task function
-      "UpdateEmployee",       // Task name
-      8192,                   // Stack size (bytes)
-      NULL,                   // Task input parameter
-      2,                      // Priority (Lower)
-      &UpdateEmployeeDetailC  // Task handle
+      updateEmployeeDetails, // Task function
+      "UpdateEmployee",      // Task name
+      8192,                  // Stack size (bytes)
+      NULL,                  // Task input parameter
+      2,                     // Priority (Lower)
+      &UpdateEmployeeDetailC // Task handle
   );
-  
 }
 
 uint8_t downloadFingerprintTemplate(uint16_t id)
@@ -2929,7 +2949,6 @@ void WebServerRoutes()
   });
   */
 
- 
   server.on("/FingerChecker", HTTP_POST, [](AsyncWebServerRequest *request)
             {
         Serial.println("Finger Checker Inside");
@@ -4009,8 +4028,6 @@ request->send(500, "text/plain", "Re-registration failed");
   server.begin();
 }
 
-
-
 bool CheckNullonServerRfidInitialFetch()
 {
   if (WiFi.status() == WL_CONNECTED)
@@ -4033,7 +4050,7 @@ bool CheckNullonServerRfidInitialFetch()
         Serial.println(minutes_start);
 
         ledFetchingon();
-        HTTPClient http; 
+        HTTPClient http;
         DynamicJsonBuffer jsonBuffers;
         JsonObject &JSONEncoder = jsonBuffers.createObject();
         JSONEncoder["companyId"] = CompanyId;
@@ -4041,21 +4058,21 @@ bool CheckNullonServerRfidInitialFetch()
         JSONEncoder["startCount"] = startCount;
         JSONEncoder["endCount"] = endCount;
 
-        char JSONmessageBuffer[500]; 
+        char JSONmessageBuffer[500];
         JSONEncoder.printTo(JSONmessageBuffer, sizeof(JSONmessageBuffer));
         Serial.println(JSONmessageBuffer);
-// Mark
+        // Mark
         http.begin("https://wildfly.letzcheckin.com:443/EmployeeAttendenceAPI/RFIDAPI/AutoSyncEmployeeData");
         http.addHeader("Content-Type", "application/json");
 
-        httpCode = http.POST(JSONmessageBuffer); 
+        httpCode = http.POST(JSONmessageBuffer);
         Serial.print("HTTP Code: ");
         Serial.println(httpCode);
 
         String payload = http.getString();
         Serial.print("Payload: ");
         Serial.println(payload);
-        
+
         http.end(); // Close the connection
 
         if (httpCode == 200)
@@ -4113,7 +4130,6 @@ bool CheckNullonServerRfidInitialFetch()
     return false;
   }
 }
-
 
 void softAp()
 {
@@ -4514,8 +4530,20 @@ void initialSetupFun()
   WifiConnectCheck();
   CompanyIdCheck();
   // mountinSD();
+  FirmwareUpdate();
+
   DeviceIdInitialize();
   InitializeRTC();
+  if (rtc.lostPower())
+  {
+    Serial.println("RTC lost power, let's set the time!");
+
+    // Adjust the RTC to the date & time this sketch was compiled
+    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+
+    // Or set a custom date and time
+    // rtc.adjust(DateTime(2024, 12, 6, 14, 30, 0)); // YYYY, MM, DD, HH, MM, SS
+  }
   SensorFingerBegin();
   // delay(2000);
   rfidInitialCheck();
@@ -5598,8 +5626,8 @@ int ServerSend(String Empid, String companyId)
   JSONencoder.printTo(JSONmessageBuffer, sizeof(JSONmessageBuffer));
   Serial.print("JSON MESSAGE server send");
   Serial.println(JSONmessageBuffer);
-  http.begin("http://letzcheckin.com:8080/EmployeeAttendenceAPI/employee/EmployeeCheckInOut"); // Specify request destination
-  http.addHeader("Content-Type", "application/json");                                         // Specify content-type header
+  http.begin("http://3.6.171.29:8080/EmployeeAttendenceAPI/employee/EmployeeCheckInOut"); // Specify request destination
+  http.addHeader("Content-Type", "application/json");                                     // Specify content-type header
   Serial.println("Here after content type");
   int httpCode = http.POST(JSONmessageBuffer); // Send the request
   Serial.print("HttpCode:");
@@ -5768,6 +5796,69 @@ void wifiConnectedCheckerMin()
     }
   }
 }
+
+/* GIT UPDATE START */
+void FirmwareUpdate()
+{
+  WiFiClientSecure clients;
+  clients.setInsecure();
+  String payload = "";
+  if (!clients.connect(host, httpsPort))
+  {
+    Serial.println("Connection failed");
+    return;
+  }
+  clients.print(String("GET ") + URL_fw_Version + " HTTP/1.1\r\n" +
+                "Host: " + host + "\r\n" +
+                "User-Agent: BuildFailureDetectorESP8266\r\n" +
+                "Cache-Control: no-cache\r\n" +
+                "Connection: close\r\n\r\n");
+  while (true)
+  {
+    String line = clients.readStringUntil('\n');
+    Serial.print("Line: ");
+    Serial.println(line);
+    if (line == "\r")
+    {
+      // Serial.println("Headers received");
+      break;
+    }
+  }
+  payload = clients.readStringUntil('\n');
+
+  payload.trim();
+  Serial.print("Payload: ");
+  Serial.println(payload);
+  Serial.print("Firmware installed: ");
+  Serial.println(FirmwareVer);
+  if (payload == FirmwareVer)
+  {
+    Serial.println("Device already on latest firmware version");
+  }
+  else
+  {
+    Serial.println("New firmware detected");
+    httpUpdate.setLedPin(LED_BUILTIN, LOW);
+    t_httpUpdate_return ret = httpUpdate.update(clients, URL_fw_Bin);
+
+    switch (ret)
+    {
+    case HTTP_UPDATE_FAILED:
+      Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s\n", httpUpdate.getLastError(), httpUpdate.getLastErrorString().c_str());
+      break;
+
+    case HTTP_UPDATE_NO_UPDATES:
+      Serial.println("HTTP_UPDATE_NO_UPDATES");
+      break;
+
+    case HTTP_UPDATE_OK:
+      Serial.println("HTTP_UPDATE_OK");
+      break;
+    }
+  }
+  clients.stop();
+}
+/* GIT UPDATE END */
 
 void setup()
 {
